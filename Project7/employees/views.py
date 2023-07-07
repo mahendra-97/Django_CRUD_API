@@ -44,22 +44,55 @@ class EmployeeAPI(View):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    def put(self, request, employee_id):
+    # def put(self, request, employee_id):
+    #     try:
+    #         ename = request.POST.get('name')
+    #         ephone = request.POST.get('phone')
+    #         eemail = request.POST.get('email')
+    #         edepartment = request.POST.get('department')
+
+    #         is_employee_exist = Employee.objects.filter(id=employee_id).count()
+
+    #         if is_employee_exist > 0:
+    #             Employee.objects.filter(id=employee_id).update(name = ename, phone = ephone, email = eemail, department = edepartment)
+    #             return JsonResponse({'success': 'Employee updated successfully'})
+    #     except Employee.DoesNotExist:
+    #         return JsonResponse({'error': 'Employee not found'}, status=404)
+    #     except Exception as e:
+    #         return JsonResponse({'error': str(e)}, status=500)
+        
+
+    def put (self, request, employee_id=None):
         try:
-            ename = request.POST.get('name')
-            ephone = request.POST.get('phone')
-            eemail = request.POST.get('email')
-            edepartment = request.POST.get('department')
+            if request.method == 'PUT':
+                ename = request.POST.get('ename', None)
+                ephone = request.POST.get('ephone',)
+                if id==None:
+                    data = {'status' : 'error', 'error_code' : 100, 'message' : 'Employee ID is required'}
+                    return JsonResponse(data)
+                
 
-            is_employee_exist = Employee.objects.filter(id=employee_id).count()
+                is_exist = Employee.objects.filter(eid = employee_id).count()
 
-            if is_employee_exist > 0:
-                Employee.objects.filter(id=employee_id).update(name = ename, phone = ephone, email = eemail, department = edepartment)
-                return JsonResponse({'success': 'Employee updated successfully'})
-        except Employee.DoesNotExist:
-            return JsonResponse({'error': 'Employee not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+                if is_exist > 0:
+                    Employee.objects.filter(eid = id).update(name = ename)
+                    data = {'status' : 'success', 'error_code' : 0, 'message' : 'Employee Data updated successfully'}
+                    return JsonResponse(data)
+                else:
+                    data = {'status' : 'error', 'error_code' : 100, 'message' : 'Invalid request'}
+                    return JsonResponse(data)
+            
+            else:
+                data = {'status' : 'error', 'error_code' : 101, 'message' : 'Invalid request method'}
+                return JsonResponse(data)
+        except ValidationError as e:
+            data = {'status' : 'error', 'error_code' : 103, 'message' : "error: {0} ".format(e)}
+            return JsonResponse(data)
+        
+        except NameError as e:
+            data = {'status' : 'error', 'error_code' : 103, 'message' : "error: {0} ".format(e)}
+            return JsonResponse(data)
+        
 
     def patch(self, request, employee_id):
         try:
